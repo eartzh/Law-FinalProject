@@ -1,0 +1,664 @@
+:root {
+  --game-w: min(100vw, 480px);
+  --game-h: min(100vh, calc(var(--game-w) * 16 / 9));
+  --paper: #fffdf6;
+  --ink: #2f2a24;
+  --orange: #f59e0b;
+  --green: #22c55e;
+  --danger: #ef4444;
+  --blue: #38bdf8;
+  --purple: #a78bfa;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+
+}
+
+
+button,
+.choice-button,
+.sign-button,
+.contract-clause,
+.dialogue-box {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+
+img,
+.character-sprite {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: auto;
+}
+
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at top, #4b5563 0%, #111827 55%, #030712 100%);
+  font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  color: var(--ink);
+  overflow: hidden;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#game-container {
+  width: var(--game-w);
+  height: var(--game-h);
+  max-height: 100vh;
+  aspect-ratio: 9 / 16;
+  position: relative;
+  overflow: hidden;
+  background: #111;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .6);
+  border-radius: clamp(0px, 2vw, 26px);
+}
+
+/* =========================
+   Phase 0: Contract Stage
+   ========================= */
+#contract-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: #f3f0e8;
+  transition: opacity .55s ease, transform .55s ease;
+}
+
+#contract-stage.fade-out {
+  opacity: 0;
+  transform: translateY(-18px) scale(.98);
+  pointer-events: none;
+}
+
+.contract-card {
+  width: 100%;
+  max-height: 94%;
+  overflow-y: auto;
+  background: var(--paper);
+  padding: 24px 20px 22px;
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(64, 48, 30, .28), inset 0 0 0 1px rgba(110, 80, 40, .16);
+  background-image:
+    linear-gradient(rgba(255,255,255,.68), rgba(255,255,255,.68)),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(150,120,80,.16) 32px);
+}
+
+.contract-title {
+  margin: 0 0 8px;
+  text-align: center;
+  font-family: "DFKai-SB", "BiauKai", "KaiTi", serif;
+  font-size: 30px;
+  letter-spacing: .16em;
+  color: #221b16;
+}
+
+.contract-subtitle {
+  margin: 0 0 18px;
+  text-align: center;
+  font-size: 13px;
+  color: #786553;
+}
+
+.stats-preview {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.06);
+  font-weight: 700;
+}
+
+.contract-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contract-clause {
+  padding: 12px;
+  border: 1px solid rgba(90, 70, 45, .24);
+  border-radius: 10px;
+  background: rgba(255,255,255,.66);
+  transition: transform .18s ease, background .22s ease, border-color .22s ease;
+  user-select: none;
+}
+
+.contract-clause:active {
+  transform: scale(.985);
+}
+
+.contract-clause.modified {
+  background: #fff7cc;
+  border-color: #facc15;
+  box-shadow: 0 0 0 2px rgba(250, 204, 21, .18);
+}
+
+.clause-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  color: #4a3728;
+  margin-bottom: 6px;
+}
+
+.tag {
+  flex: 0 0 auto;
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: white;
+  background: #9ca3af;
+}
+
+.tag.overlord {
+  background: #dc2626;
+}
+
+.tag.reasonable {
+  background: #0ea5e9;
+}
+
+.original-text {
+  margin: 0;
+  line-height: 1.55;
+  color: #56483d;
+}
+
+.modified .original-text {
+  text-decoration: line-through;
+  color: #9a8574;
+}
+
+.new-text {
+  margin: 8px 0 0;
+  line-height: 1.55;
+  color: #14532d;
+  font-weight: 800;
+}
+
+.sign-button {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #111827, #4b5563);
+  color: white;
+  font-size: 18px;
+  font-weight: 900;
+  box-shadow: 0 12px 22px rgba(17,24,39,.28);
+  transition: transform .18s ease, filter .18s ease;
+}
+
+.sign-button:hover {
+  filter: brightness(1.06);
+}
+
+.sign-button:active {
+  transform: scale(.98);
+}
+
+.hint {
+  margin: 10px 0 0;
+  text-align: center;
+  color: #7c6b5b;
+  font-size: 12px;
+}
+
+/* =========================
+   Main GalGame Stage
+   ========================= */
+#game-stage {
+  position: absolute;
+  inset: 0;
+  display: none;
+  background: #111;
+}
+
+#game-stage.active {
+  display: block;
+}
+
+/* Layer 1: Background */
+.game-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #333; /* 使用者可於此替換為背景圖片，例如：房間、客廳等。 */
+}
+
+.game-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 25%, rgba(255,255,255,.08), transparent 38%), linear-gradient(to bottom, transparent 40%, rgba(0,0,0,.36));
+}
+
+/* Layer 2: Character Sprite */
+.character-sprite {
+  position: absolute;
+  z-index: 2;
+  width: 60%;
+  height: 46%;
+  left: 50%;
+  bottom: 22%;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  color: rgba(255,255,255,.72);
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-shadow: 0 2px 8px rgba(0,0,0,.7);
+}
+
+.hud {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  color: white;
+  pointer-events: none;
+}
+
+.hud-item {
+  padding: 8px 7px;
+  border-radius: 14px;
+  background: rgba(0,0,0,.58);
+  border: 1px solid rgba(255,255,255,.16);
+  text-align: center;
+  font-size: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.hud-value {
+  display: block;
+  margin-top: 2px;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+/* Layer 3: Dialogue Box */
+.dialogue-box {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  width: 93%;
+  min-height: 23%;
+  padding: 26px 16px 16px;
+  border-radius: 20px;
+  background: rgba(0,0,0,.75);
+  border: 1px solid rgba(255,255,255,.32);
+  color: white;
+  box-shadow: 0 16px 34px rgba(0,0,0,.4);
+  backdrop-filter: blur(7px);
+}
+
+.speaker-name {
+  position: absolute;
+  top: -16px;
+  left: 18px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 8px 18px rgba(0,0,0,.32);
+}
+
+.speaker-name.landlord {
+  background: var(--orange);
+}
+
+.speaker-name.player {
+  background: var(--green);
+}
+
+.speaker-name.system {
+  background: var(--purple);
+}
+
+.dialogue-text {
+  margin: 0;
+  min-height: 74px;
+  line-height: 1.65;
+  font-size: 16px;
+  white-space: pre-wrap;
+}
+
+.next-button {
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  color: rgba(255,255,255,.86);
+  background: transparent;
+  font-weight: 900;
+  animation: blink 1.1s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: .38;
+  }
+}
+
+/* Layer 4: Choices */
+.choices-container {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0,0,0,.16);
+  backdrop-filter: blur(2px);
+}
+
+.choices-panel {
+  width: 100%;
+  display: grid;
+  gap: 12px;
+}
+
+.choice-button {
+  width: 100%;
+  padding: 15px 16px;
+  border-radius: 18px;
+  color: white;
+  background: linear-gradient(135deg, rgba(17,24,39,.96), rgba(55,65,81,.96));
+  border: 1px solid rgba(255,255,255,.25);
+  box-shadow: 0 12px 24px rgba(0,0,0,.38);
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.35;
+  transition: transform .16s ease, filter .16s ease, box-shadow .16s ease;
+}
+
+.choice-button:hover {
+  filter: brightness(1.12);
+  transform: translateY(-2px);
+}
+
+.choice-button:active {
+  transform: scale(.965);
+}
+
+.choice-button.danger {
+  background: linear-gradient(135deg, #991b1b, #ef4444);
+}
+
+.choice-button.safe {
+  background: linear-gradient(135deg, #166534, #22c55e);
+}
+
+.choice-button.court {
+  background: linear-gradient(135deg, #1e3a8a, #38bdf8);
+}
+
+.choice-button:disabled {
+  opacity: .42;
+  filter: grayscale(1);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.proposal-card {
+  color: white;
+  text-align: center;
+  padding: 16px;
+  border-radius: 22px;
+  background: rgba(0,0,0,.76);
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow: 0 18px 40px rgba(0,0,0,.45);
+}
+
+.proposal-card h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.proposal-card p {
+  margin: 4px 0;
+  line-height: 1.55;
+}
+
+.ending-overlay {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  color: white;
+  text-align: center;
+  background: rgba(0,0,0,.82);
+}
+
+.ending-card {
+  width: 100%;
+  padding: 28px 18px;
+  border-radius: 28px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.2);
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+
+.ending-card h1 {
+  margin: 0 0 12px;
+  font-size: 30px;
+}
+
+.ending-card p {
+  line-height: 1.7;
+}
+.contract-feedback-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, .38);
+  backdrop-filter: blur(3px);
+}
+
+.contract-feedback-popup {
+  width: 100%;
+  max-width: 390px;
+  padding: 22px 18px;
+  border-radius: 24px;
+  color: white;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,.24);
+  box-shadow: 0 22px 60px rgba(0,0,0,.45);
+  animation: contract-popup-in .18s ease-out;
+}
+
+.contract-feedback-popup.correct {
+  background: linear-gradient(135deg, rgba(22,101,52,.96), rgba(34,197,94,.92));
+}
+
+.contract-feedback-popup.wrong {
+  background: linear-gradient(135deg, rgba(127,29,29,.96), rgba(239,68,68,.92));
+}
+
+.contract-feedback-popup h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+}
+
+.contract-feedback-message {
+  margin: 0 0 14px;
+  line-height: 1.65;
+  font-weight: 700;
+}
+
+.contract-feedback-effect {
+  margin: 12px 0 18px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(0,0,0,.18);
+}
+
+.contract-feedback-effect p {
+  margin: 5px 0;
+}
+
+.contract-feedback-effect .bad {
+  color: #fecaca;
+}
+
+.contract-feedback-button {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  color: #111827;
+  background: white;
+  font-size: 16px;
+  font-weight: 900;
+  transition: transform .16s ease, filter .16s ease;
+}
+
+.contract-feedback-button:active {
+  transform: scale(.96);
+}
+
+@keyframes contract-popup-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.month-transition-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .92);
+  color: white;
+  pointer-events: all;
+  animation: month-overlay-fade .9s ease-in-out forwards;
+}
+
+.month-transition-text {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: .18em;
+  text-shadow: 0 0 18px rgba(255,255,255,.45);
+  animation: month-text-pop .9s ease-in-out forwards;
+}
+
+@keyframes month-overlay-fade {
+  0% {
+    opacity: 0;
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  78% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes month-text-pop {
+  0% {
+    opacity: 0;
+    transform: scale(.86);
+  }
+
+  25% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  75% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+.landlord-slide-enter-active {
+  transition:
+    opacity .42s ease,
+    transform .42s cubic-bezier(.22, 1, .36, 1);
+}
+
+.landlord-slide-leave-active {
+  transition:
+    opacity .34s ease,
+    transform .34s cubic-bezier(.64, 0, .78, 0);
+}
+
+.landlord-slide-enter-from {
+  opacity: 0;
+  transform: translateX(-72%) translateY(0) scale(1);
+}
+
+.landlord-slide-enter-to {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.landlord-slide-leave-from {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.landlord-slide-leave-to {
+  opacity: 0;
+  transform: translateX(18%) translateY(8px) scale(.98);
+}
