@@ -35,12 +35,6 @@ const contractFeedback = game.contractFeedback;
         >
           <div class="clause-name">
             <span>{{ clause.name }}</span>
-            <span
-              class="tag"
-              :class="clause.type === 'overlord' ? 'overlord' : 'reasonable'"
-            >
-              {{ clause.type === 'overlord' ? '霸王條款' : '合理條款' }}
-            </span>
           </div>
 
           <p class="original-text">
